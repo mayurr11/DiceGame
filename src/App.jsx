@@ -1,44 +1,41 @@
-import { useState, useEffect } from "react";
 import StartGame from "./components/StartGame";
+import { useState, useEffect } from "react";
 import GamePlay from "./components/GamePlay";
 
 function App() {
-  const [isGameStarted, setIsGameStarted] = useState(false);
-  const [highScore, setHighScore] = useState(0);
+  const [isGameStarted, setIsGameStarted] = useState(() => {
+    return localStorage.getItem('isGameStarted') === 'true';
+  });
+
+  const [highScore, setHighScore] = useState(() => {
+    const savedHighScore = localStorage.getItem('highScore');
+    return savedHighScore !== null ? parseInt(savedHighScore, 10) : 0;
+  });
+
+  const toggleGamePlay = () => {
+    setIsGameStarted((prev) => !prev);
+  };
+
+  const endGame = (currentScore) => {
+    setIsGameStarted(false);
+    if (currentScore > highScore) {
+      setHighScore(currentScore);
+      localStorage.setItem('highScore', currentScore.toString());
+    }
+    localStorage.setItem('isGameStarted', 'false');
+    localStorage.removeItem('score'); // Clear the ongoing score
+  };
 
   useEffect(() => {
-    const savedGameState = localStorage.getItem("isGameStarted");
-    if (savedGameState) {
-      setIsGameStarted(JSON.parse(savedGameState));
-    }
-
-    const savedHighScore = localStorage.getItem("highScore");
-    if (savedHighScore) {
-      setHighScore(JSON.parse(savedHighScore));
-    }
-  }, []);
-
-  const startGame = () => {
-    setIsGameStarted(true);
-  };
-
-  const endGame = () => {
-    setIsGameStarted(false);
-  };
-
-  const updateHighScore = (score) => {
-    if (score > highScore) {
-      setHighScore(score);
-      localStorage.setItem("highScore", JSON.stringify(score));
-    }
-  };
+    localStorage.setItem('isGameStarted', isGameStarted.toString());
+  }, [isGameStarted]);
 
   return (
     <>
       {isGameStarted ? (
-        <GamePlay endGame={endGame} updateHighScore={updateHighScore} />
+        <GamePlay endGame={endGame} />
       ) : (
-        <StartGame toggleGamePlay={startGame} highScore={highScore} />
+        <StartGame toggleGamePlay={toggleGamePlay} highScore={highScore} />
       )}
     </>
   );

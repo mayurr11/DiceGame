@@ -6,34 +6,15 @@ import Modal from "./Modal"; // Import the Modal component
 import styled from "styled-components";
 import { Button, OutlineButton } from "../styled-components/Button";
 
-const GamePlay = ({ endGame, updateHighScore }) => {
-  const [score, setScore] = useState(0);
+const GamePlay = ({ endGame }) => {
+  const [score, setScore] = useState(() => {
+    const savedScore = localStorage.getItem('score');
+    return savedScore !== null ? parseInt(savedScore, 10) : 0;
+  });
   const [selectedNumber, setSelectedNumber] = useState(null);
   const [currentDice, setCurrentDice] = useState(1);
   const [showModal, setShowModal] = useState(false); // State to control modal visibility
   const [showRules, setShowRules] = useState(false); // State to control rules modal visibility
-
-  useEffect(() => {
-    const savedScore = localStorage.getItem("score");
-    const savedSelectedNumber = localStorage.getItem("selectedNumber");
-    const savedCurrentDice = localStorage.getItem("currentDice");
-
-    if (savedScore) setScore(JSON.parse(savedScore));
-    if (savedSelectedNumber) setSelectedNumber(JSON.parse(savedSelectedNumber));
-    if (savedCurrentDice) setCurrentDice(JSON.parse(savedCurrentDice));
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem("score", JSON.stringify(score));
-  }, [score]);
-
-  useEffect(() => {
-    localStorage.setItem("selectedNumber", JSON.stringify(selectedNumber));
-  }, [selectedNumber]);
-
-  useEffect(() => {
-    localStorage.setItem("currentDice", JSON.stringify(currentDice));
-  }, [currentDice]);
 
   const getRandomNumber = () => {
     return Math.floor(Math.random() * 6) + 1;
@@ -51,32 +32,33 @@ const GamePlay = ({ endGame, updateHighScore }) => {
     if (selectedNumber === randomNumber) {
       setScore((prev) => prev + randomNumber);
     } else {
-      setScore((prev) => prev - 2);
+      // setScore((prev) => prev - 2);
     }
 
     setSelectedNumber(null);
   };
 
-  const resetGame = () => {
-    setScore(0);
-    setSelectedNumber(null);
-    setCurrentDice(1);
-  };
+  // Save score to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('score', score.toString());
+  }, [score]);
 
-  const handleEndGame = () => {
-    updateHighScore(score);
-    endGame();
-  };
-
+  // Close the warning modal automatically after 1-2 seconds
   useEffect(() => {
     if (showModal) {
       const timer = setTimeout(() => {
         setShowModal(false);
-      }, 1500); // Set to 1.5 seconds (1500 milliseconds)
+      }, 1000); // Set to 1 second (1000 milliseconds)
 
       return () => clearTimeout(timer); // Cleanup the timer on component unmount or if showModal changes
     }
   }, [showModal]);
+
+  const handleReset = () => {
+    setScore(0);
+    setSelectedNumber(null);
+    setCurrentDice(1);
+  };
 
   return (
     <Main>
@@ -95,9 +77,9 @@ const GamePlay = ({ endGame, updateHighScore }) => {
           setShowModal={setShowModal} 
         />
         <div className="btns">
-          <OutlineButton onClick={resetGame}>Reset</OutlineButton>
+          <OutlineButton onClick={handleReset}>Reset</OutlineButton>
           <Button onClick={() => setShowRules(true)}>Show Rules</Button>
-          <Button onClick={handleEndGame}>End Game</Button>
+          <Button onClick={() => endGame(score)}>End Game</Button> {/* Pass the current score */}
         </div>
       </div>
       <Modal 
@@ -121,7 +103,7 @@ const Main = styled.main`
     display: flex;
     justify-content: space-between;
     margin: 2rem 4rem;
-    min-width: 100%;
+    /* min-width: 100%; */
     align-items: center;
 
     @media (max-width: 768px) {

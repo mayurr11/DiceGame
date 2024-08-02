@@ -48,6 +48,7 @@ const Selector = styled.div`
   display: flex;
   gap: 2rem;
   align-items: center;
+  cursor: pointer;
 
   @media (max-width: 768px) {
     gap: 1rem;
