@@ -16,7 +16,7 @@ const NumberSelector = ({ selectedNumber, setSelectedNumber }) => {
           </Box>
         ))}
       </Selector>
-      <p>Selected Number: {selectedNumber}</p>
+      {/* <p>Selected Number: {selectedNumber}</p> */}
     </Container>
   );
 };
@@ -28,6 +28,7 @@ const Container = styled.div`
   gap: 2rem;
   align-items: end;
   flex-direction: column;
+  margin: 2rem 0;
 
   p {
     font-size: 2rem;

@@ -1,8 +1,8 @@
-import React from "react";
 import DicePic from "../assets/images/dices.png";
 import styled from "styled-components";
+import { Button } from "../styled-components/Button";
 
-const StartGame = ({ toggleGamePlay }) => {
+const StartGame = ({ toggleGamePlay, highScore }) => {
   return (
     <Container>
       <div className="img-container">
@@ -10,6 +10,7 @@ const StartGame = ({ toggleGamePlay }) => {
       </div>
       <div className="content">
         <h1>Dice Game</h1>
+        <p>High Score: {highScore}</p>
         <Button onClick={toggleGamePlay}>Play Now</Button>
       </div>
     </Container>
@@ -31,29 +32,29 @@ const Container = styled.div`
       font-size: 96px;
       white-space: nowrap;
     }
+    p {
+      font-size: 24px;
+      margin: 1rem 0;
+    }
   }
 
   .img-container img {
     max-width: 550px;
   }
-`;
 
-const Button = styled.button`
-  padding: 10px 18px;
-  background-color: #000;
-  color: #fff;
-  border: 1px solid transparent;
-  outline: none;
-  min-width: 220px;
-  font-size: 16px;
-  font-weight: 550;
-  transition: 0.4s background-color ease-in;
-  cursor: pointer;
-
-  &:hover {
-    background-color: #ffffff;
-    color: #000;
-    border: 1px solid black;
-    transition: 0.3s background-color ease-in;
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 2rem;
+    .content {
+      h1 {
+        font-size: 48px;
+      }
+      p {
+        font-size: 18px;
+      }
+    }
+    .img-container img {
+      max-width: 300px;
+    }
   }
 `;

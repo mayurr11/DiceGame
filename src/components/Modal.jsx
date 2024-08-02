@@ -11,13 +11,14 @@ const fadeIn = keyframes`
   }
 `;
 
-const Modal = ({ show, onClose, message }) => {
+const Modal = ({ show, onClose, message, title }) => {
   if (!show) return null;
 
   return (
     <Overlay>
       <ModalContainer>
         <Header>
+            <Title>{title}</Title>
           <CloseButton onClick={onClose}>&times;</CloseButton>
         </Header>
         <Content>
@@ -56,7 +57,7 @@ const ModalContainer = styled.div`
 
 const Header = styled.div`
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid #eaeaea;
   padding-bottom: 1rem;
